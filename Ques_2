@@ -1,6 +1,6 @@
-SELECT s.Name FROM Students AS s 
-JOIN Packages AS sp ON s.ID = sp.ID 
-JOIN Friends AS f ON s.ID = f.ID
-JOIN Packages AS fp ON f.Friend_ID = fp.ID
-WHERE sp.Salary < fp.Salary
-ORDER BY fp.Salary;
+select s.Name from students s
+inner join packages sp on s.ID=sp.ID
+inner join friends f on s.ID=f.ID
+inner join packages fp on f.friend_ID=fp.ID
+where sp.salary<fp.salary
+order by fp.salary;
