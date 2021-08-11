@@ -1,19 +1,13 @@
-SELECT con.contest_id, con.hacker_id, con.name, 
-SUM(sg.total_submissions), SUM(sg.total_accepted_submissions), 
-SUM(vg.total_views), SUM(vg.total_unique_views)
-FROM Contests AS con
-JOIN Colleges AS col ON con.contest_id = col.contest_id
-JOIN Challenges AS cha ON cha.college_id = col.college_id
-LEFT JOIN
-(SELECT ss.challenge_id, SUM(ss.total_submissions) AS total_submissions, SUM(ss.total_accepted_submissions) AS total_accepted_submissions FROM Submission_Stats AS ss GROUP BY ss.challenge_id) AS sg
-ON cha.challenge_id = sg.challenge_id
-LEFT JOIN
-(SELECT vs.challenge_id, SUM(vs.total_views) AS total_views, SUM(vs.total_unique_views) AS total_unique_views
-FROM View_Stats AS vs GROUP BY vs.challenge_id) AS vg
-ON cha.challenge_id = vg.challenge_id
-GROUP BY con.contest_id, con.hacker_id, con.name
-HAVING SUM(sg.total_submissions) +
-       SUM(sg.total_accepted_submissions) +
-       SUM(vg.total_views) +
-       SUM(vg.total_unique_views) > 0
-ORDER BY con.contest_id;
+SELECT CT.CONTEST_ID, HACKER_ID, NAME, SUM(TS), SUM(TAS), SUM(TV), SUM(TUV)
+    FROM CONTESTS CT
+    JOIN COLLEGES CL
+    ON CT.CONTEST_ID=CL.CONTEST_ID
+    JOIN CHALLENGES CH
+    ON CH.COLLEGE_ID=CL.COLLEGE_ID
+    LEFT JOIN (SELECT CHALLENGE_ID, SUM(TOTAL_VIEWS) TV, SUM(TOTAL_UNIQUE_VIEWS) TUV FROM VIEW_STATS GROUP BY CHALLENGE_ID) VS
+    ON VS.CHALLENGE_ID=CH.CHALLENGE_ID
+    LEFT JOIN (SELECT CHALLENGE_ID, SUM(TOTAL_SUBMISSIONS) TS, SUM(TOTAL_ACCEPTED_SUBMISSIONS) TAS FROM SUBMISSION_STATS GROUP BY CHALLENGE_ID) SS
+    ON SS.CHALLENGE_ID=CH.CHALLENGE_ID
+GROUP BY CT.CONTEST_ID, HACKER_ID, NAME
+HAVING (SUM(TS)+ SUM(TAS)+ SUM(TV)+SUM(TUV))>0
+ORDER BY CT.CONTEST_ID;
