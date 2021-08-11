@@ -1,6 +1,4 @@
-SELECT s.Name FROM Students AS s 
-JOIN Packages AS sp ON s.ID = sp.ID 
-JOIN Friends AS f ON s.ID = f.ID
-JOIN Packages AS fp ON f.Friend_ID = fp.ID
-WHERE sp.Salary < fp.Salary
-ORDER BY fp.Salary;
+SELECT  MIN(start_date), MAX(end_date) from
+(SELECT *, DATEADD(D, -(ROW_NUMBER() OVER(ORDER BY start_date)), start_date) AS project_id from projects) t
+GROUP BY project_id
+ORDER BY count(*), min(start_date);
